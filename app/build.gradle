@@ -14,6 +14,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -54,4 +55,11 @@ dependencies {
     //unit test
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
     testImplementation "org.koin:koin-test:$koinVersion"
+
+    //lottie
+    implementation 'com.airbnb.android:lottie:3.4.1'
+
+    //country picker
+    implementation 'com.github.mukeshsolanki:country-picker-android:2.0.3'
+    implementation "com.google.android.material:material:1.2.0"
 }

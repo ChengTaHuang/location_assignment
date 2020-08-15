@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">assignment</string>
+    <string name="username_or_email">Username/Email</string>
+    <string name="password">password</string>
+    <string name="country">Country</string>
+    <string name="login">Login</string>
+    <string name="alphanumeric">Alphanumeric</string>
+    <string name="eight_characters_minimum">8 characters minimum</string>
+    <string name="one_or_more_of_the_above_information_is_incorrect">One or more of the above information is incorrect.</string>
 </resources>
