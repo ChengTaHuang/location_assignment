@@ -1,5 +1,6 @@
 package com.cartrack.assignment.ui.login
 
+import androidx.room.EmptyResultSetException
 import com.cartrack.assignment.ui.base.BaseViewModel
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -9,7 +10,7 @@ import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.SingleSubject
 
 class LoginViewModel(private val model: LoginModel) : BaseViewModel() {
-    private val onSuccessSource = SingleSubject.create<Boolean>()
+    private val onSuccessSource = PublishSubject.create<Boolean>()
     private val isLoadingSource = PublishSubject.create<Boolean>()
     val checkPasswordFormat: Observable<Format>
         get() = model.checkPasswordFormat().distinctUntilChanged()
@@ -17,7 +18,7 @@ class LoginViewModel(private val model: LoginModel) : BaseViewModel() {
     val enableLogin: Observable<Boolean>
         get() = model.enableLogin()
 
-    val onLoginResult : Single<Boolean>
+    val onLoginResult : Observable<Boolean>
         get() = onSuccessSource
 
     val isLoading : Observable<Boolean>
@@ -42,9 +43,13 @@ class LoginViewModel(private val model: LoginModel) : BaseViewModel() {
             .doOnSubscribe { isLoadingSource.onNext(true) }
             .doFinally { isLoadingSource.onNext(false) }
             .subscribe({
-                onSuccessSource.onSuccess(it)
+                onSuccessSource.onNext(it)
             }, {
-                onSuccessSource.onError(it)
+                if(it is EmptyResultSetException){
+                    onSuccessSource.onNext(false)
+                }else {
+                    onSuccessSource.onError(it)
+                }
             })
             .disposeOnDestroy()
     }

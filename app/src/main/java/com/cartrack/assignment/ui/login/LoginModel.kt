@@ -1,5 +1,7 @@
 package com.cartrack.assignment.ui.login
 
+import android.util.Log
+import com.cartrack.assignment.data.local.AccountDao
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.Function3
@@ -21,7 +23,7 @@ interface LoginModel {
     fun login(name: String, password: String, countryCode: String): Single<Boolean>
 }
 
-class LoginModelImpl() : LoginModel {
+class LoginModelImpl(private val accountDbSource : AccountDao) : LoginModel {
     private val userNameSource = PublishSubject.create<UserNameData>()
     private val passwordSource = PublishSubject.create<PasswordData>()
     private val checkPasswordSource = PublishSubject.create<Format>()
@@ -56,7 +58,7 @@ class LoginModelImpl() : LoginModel {
         )
 
     override fun login(name: String, password: String, countryCode: String): Single<Boolean> =
-        Single.timer(3, TimeUnit.SECONDS).map { true }
+        accountDbSource.getAccount(name,password,countryCode).map { true }
 
 
     private fun isPasswordValid(password: String): Format {

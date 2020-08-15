@@ -7,15 +7,18 @@ import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.view.View
 import com.cartrack.assignment.R
+import com.cartrack.assignment.data.local.AccountDao
 import com.cartrack.assignment.ui.base.BaseActivity
 import com.mukesh.countrypicker.Country
 import com.mukesh.countrypicker.CountryPicker
+import com.mukesh.countrypicker.CountryPicker.SORT_BY_NAME
 import com.mukesh.countrypicker.listeners.OnCountryPickerListener
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_login.*
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -128,6 +131,7 @@ class LoginActivity : BaseActivity(), OnCountryPickerListener {
             .with(this@LoginActivity)
             .listener(this@LoginActivity)
             .canSearch(false)
+            .sortBy(SORT_BY_NAME)
             .build()
         countryPicker.showDialog(this@LoginActivity)
     }
@@ -189,15 +193,17 @@ class LoginActivity : BaseActivity(), OnCountryPickerListener {
             .disposeOnDestroy()
     }
 
-    private fun subscribeLoginEvent(state: Single<Boolean>) {
+    private fun subscribeLoginEvent(state: Observable<Boolean>) {
         state
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Log.i("check", "login $it")
+                if(it){
+
+                }else{
+                    displayLoginInfoError(true)
+                }
             }, {
-                //TODO HANDLING API ERROR
-                //showError(it)
-                displayLoginInfoError(true)
+                showError(it)
             })
             .disposeOnDestroy()
     }
