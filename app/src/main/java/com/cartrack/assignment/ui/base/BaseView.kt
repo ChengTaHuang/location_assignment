@@ -2,10 +2,8 @@ package com.cartrack.assignment.ui.base
 
 interface BaseView {
 
-    fun showLoading()
+    fun displayLoading(isLoading : Boolean)
 
-    fun hideLoading()
-
-    fun showError()
+    fun showError(throwable: Throwable)
 
 }

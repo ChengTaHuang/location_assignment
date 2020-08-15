@@ -8,4 +8,7 @@
         <item name="colorAccent">@color/colorBlue</item>
     </style>
 
+    <style name="AppTheme.ContentLoadingProgress">
+        <item name="colorAccent">@color/colorDarkGary</item>
+    </style>
 </resources>

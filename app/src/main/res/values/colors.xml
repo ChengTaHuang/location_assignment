@@ -13,4 +13,5 @@
     <color name="colorLightBlue">#99006dff</color>
     <color name="colorGreen">#02b875</color>
     <color name="colorGary">#dddddd</color>
+    <color name="colorDarkGary">#283442</color>
 </resources>
