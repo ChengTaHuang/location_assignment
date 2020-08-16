@@ -43,14 +43,16 @@ class UserAdapter(private val recyclerView: RecyclerView) :
     }
 
     fun updateSelectUser(user: User) {
-        selectItemData[selectItemData.indexOf(true)] = false
+        if(selectItemData.contains(true)) {
+            selectItemData[selectItemData.indexOf(true)] = false
+        }
         selectItemData[currentList.indexOf(user)] = true
         reRenderSelectItem(selectItemData)
     }
 
     private fun initSelectItemData(size: Int) {
         for (x in 0..size) {
-            selectItemData.add(x == 0)
+            selectItemData.add(false)
         }
     }
 

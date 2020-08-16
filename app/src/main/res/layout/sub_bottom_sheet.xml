@@ -7,7 +7,7 @@
     android:layout_height="250dp"
     android:background="@drawable/bg_bottom_sheet"
     app:behavior_hideable="false"
-    app:behavior_peekHeight="50dp"
+    app:behavior_peekHeight="40dp"
     app:layout_behavior="@string/bottom_sheet_behavior">
 
     <com.cartrack.assignment.ui.custom.TouchImageView
@@ -24,7 +24,7 @@
     <com.cartrack.assignment.ui.custom.TouchView
         android:id="@+id/viewOpenBar"
         android:layout_width="0dp"
-        android:layout_height="30dp"
+        android:layout_height="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -33,7 +33,6 @@
         android:id="@+id/rvUsers"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:paddingTop="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

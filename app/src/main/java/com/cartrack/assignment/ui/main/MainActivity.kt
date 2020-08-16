@@ -62,8 +62,7 @@ class MainActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClick
                 it.mark.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.select_user))
                 it.mark.showInfoWindow()
                 userAdapter.updateSelectUser(it.user)
-            }
-            else {
+            } else {
                 it.mark.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.unselect_user))
                 it.mark.hideInfoWindow()
             }
@@ -123,10 +122,9 @@ class MainActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClick
     }
 
     private fun setCallbackListener() {
-        userAdapter.setOnItemClickListener {clickedUser ->
-            //userAdapter.updateSelectUser(clickedUser)
+        userAdapter.setOnItemClickListener { clickedUser ->
             markers.forEach {
-                if(it.user == clickedUser){
+                if (it.user == clickedUser) {
                     onMarkerClick(it.mark)
                 }
             }
@@ -150,7 +148,7 @@ class MainActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClick
             val markerOptions = MarkerOptions().position(laLng)
             val marker = mMap.addMarker(markerOptions)
             marker.title = it.userName
-            markers.add(UserMarker(it , marker))
+            markers.add(UserMarker(it, marker))
             addMarkerAnimation(marker)
         }
     }
@@ -232,4 +230,4 @@ class MainActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClick
     }
 }
 
-data class UserMarker(val user : User ,val mark: Marker)
+data class UserMarker(val user: User, val mark: Marker)

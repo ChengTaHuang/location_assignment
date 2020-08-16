@@ -29,7 +29,6 @@ class LoginActivity : BaseActivity(), OnCountryPickerListener {
         setContentView(R.layout.activity_login)
         initViews()
         subscribeDataChange()
-        MainActivity.startActivity(this)
     }
 
     override fun onSelectCountry(country: Country) {
@@ -197,6 +196,7 @@ class LoginActivity : BaseActivity(), OnCountryPickerListener {
             .subscribe({
                 if (it) {
                     MainActivity.startActivity(this)
+                    finish()
                 } else {
                     displayLoginInfoError(true)
                 }
