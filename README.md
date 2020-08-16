@@ -1,4 +1,4 @@
-# location_assignment
+# Demo
 
 ![demo1](https://github.com/ChengTaHuang/location_assignment/blob/master/demo/demo1.gif)
 ![demo2](https://github.com/ChengTaHuang/location_assignment/blob/master/demo/demo2.gif)
