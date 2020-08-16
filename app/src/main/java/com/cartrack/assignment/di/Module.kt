@@ -36,7 +36,7 @@ val appModule = module {
     }
     viewModel { LoginViewModel(get()) }
     factory<MainModel> {
-        MainModelImpl()
+        MainModelImpl(get())
     }
     viewModel { MainViewModel(get()) }
 }
