@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">assignment</string>
+    <string name="domain">https://jsonplaceholder.typicode.com/</string>
+
     <string name="username_or_email">Username/Email</string>
     <string name="password">password</string>
     <string name="country">Country</string>

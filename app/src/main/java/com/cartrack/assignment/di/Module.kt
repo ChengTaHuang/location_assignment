@@ -3,6 +3,8 @@ package com.cartrack.assignment.di
 import androidx.room.Room
 import com.cartrack.assignment.data.local.DB
 import com.cartrack.assignment.data.local.DatabaseCallback
+import com.cartrack.assignment.data.remote.NetworkService
+import com.cartrack.assignment.data.remote.NetworkServiceImpl
 import com.cartrack.assignment.ui.login.LoginModel
 import com.cartrack.assignment.ui.login.LoginModelImpl
 import com.cartrack.assignment.ui.login.LoginViewModel
@@ -26,6 +28,9 @@ val appModule = module {
             .build()
     }
     single { get<DB>().accountDao() }
+    single<NetworkService> {
+        NetworkServiceImpl(get())
+    }
     factory<LoginModel> {
         LoginModelImpl(get())
     }
