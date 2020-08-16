@@ -1,6 +1,5 @@
 package com.cartrack.assignment.ui.main.adapter
 
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,61 +11,26 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cartrack.assignment.R
 import com.cartrack.assignment.data.bean.User
 import com.cartrack.assignment.ui.custom.TouchConstraintLayout
-import kotlinx.android.parcel.Parcelize
 
-sealed class ItemType(open val user: User) : Parcelable {
-    @Parcelize
-    data class Select(override val user: User) : ItemType(user)
-
-    @Parcelize
-    data class UnSelect(override val user: User) : ItemType(user)
-}
-
-class UserAdapter() : ListAdapter<ItemType, UserAdapter.BaseViewHolder>(TaskDiffCallback()) {
-    private val renderModel = RenderModel()
+class UserAdapter(private val recyclerView: RecyclerView) :
+    ListAdapter<User, UserAdapter.BaseViewHolder>(TaskDiffCallback()) {
     private var onItemClickListener: ((User) -> Unit)? = null
-
+    private var selectItemData = mutableListOf<Boolean>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return when (viewType) {
-            0 -> {
-                BaseViewHolder.SelectViewHolder(
-                    inflater.inflate(
-                        R.layout.item_user,
-                        parent,
-                        false
-                    ),
-                    onItemClickListener
-                )
-            }
-
-            1 -> {
-                BaseViewHolder.UnSelectViewHolder(
-                    inflater.inflate(
-                        R.layout.item_user,
-                        parent,
-                        false
-                    ),
-                    onItemClickListener
-                )
-            }
-
-            else -> throw Exception("NO SUPPORT THIS VIEW TYPE")
-        }
+        return BaseViewHolder(
+            inflater.inflate(
+                R.layout.item_user,
+                parent,
+                false
+            ),
+            onItemClickListener
+        )
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        when (holder) {
-            is BaseViewHolder.SelectViewHolder -> holder.render(getItem(position).user)
-            is BaseViewHolder.UnSelectViewHolder -> holder.render(getItem(position).user)
-        }
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return when (getItem(position)) {
-            is ItemType.Select -> 0
-            is ItemType.UnSelect -> 1
-        }
+        holder.render(getItem(position), position)
+        holder.renderSelect(selectItemData[position])
     }
 
     fun setOnItemClickListener(listener: ((User) -> Unit)) {
@@ -74,54 +38,62 @@ class UserAdapter() : ListAdapter<ItemType, UserAdapter.BaseViewHolder>(TaskDiff
     }
 
     fun update(user: List<User>) {
-        submitList(renderModel.convert(user))
+        initSelectItemData(user.size)
+        submitList(user)
     }
 
     fun updateSelectUser(user: User) {
-        submitList(renderModel.updateSelectUser(user))
+        selectItemData[selectItemData.indexOf(true)] = false
+        selectItemData[currentList.indexOf(user)] = true
+        reRenderSelectItem(selectItemData)
     }
 
-    sealed class BaseViewHolder(itemView: View) :
+    private fun initSelectItemData(size: Int) {
+        for (x in 0..size) {
+            selectItemData.add(x == 0)
+        }
+    }
+
+    private fun reRenderSelectItem(selectItemData: List<Boolean>) {
+        val x = recyclerView.childCount
+        var i = 0
+        while (i < x) {
+            val holder = recyclerView.getChildViewHolder(recyclerView.getChildAt(i))
+            if (holder is BaseViewHolder) {
+                holder.renderSelect(selectItemData[holder.itemView.tag as Int])
+            }
+            ++i
+        }
+    }
+
+    class BaseViewHolder(itemView: View, private val onItemClickListener: ((User) -> Unit)?) :
         RecyclerView.ViewHolder(itemView) {
-        protected val imgSelect by lazy { itemView.findViewById<AppCompatImageView>(R.id.imgSelect) }
-        protected val clBackground by lazy { itemView.findViewById<TouchConstraintLayout>(R.id.clBackground) }
+        private val imgSelect by lazy { itemView.findViewById<AppCompatImageView>(R.id.imgSelect) }
+        private val clBackground by lazy { itemView.findViewById<TouchConstraintLayout>(R.id.clBackground) }
         private val tvUserName by lazy { itemView.findViewById<AppCompatTextView>(R.id.tvUserName) }
         private val tvPhone by lazy { itemView.findViewById<AppCompatTextView>(R.id.tvPhone) }
-
-        open fun render(user: User) {
+        fun render(user: User, position: Int) {
+            itemView.tag = position
             tvUserName.text = user.userName
             tvPhone.text = user.phone
-        }
-
-        class SelectViewHolder(private val view: View, private val onItemClickListener: ((User) -> Unit)?) :
-            BaseViewHolder(view) {
-            override fun render(user: User) {
-                super.render(user)
-                imgSelect.background = view.context.getDrawable(R.drawable.bg_oval_green)
-                clBackground.setOnClickListener {
-                }
+            clBackground.setOnClickListener {
+                onItemClickListener?.invoke(user)
             }
         }
 
-        class UnSelectViewHolder(private val view: View, private val onItemClickListener: ((User) -> Unit)?) :
-            BaseViewHolder(view) {
-            override fun render(user: User) {
-                super.render(user)
-                imgSelect.background = view.context.getDrawable(R.drawable.bg_oval_gary)
-                clBackground.setOnClickListener {
-                    onItemClickListener?.invoke(user)
-                }
-            }
+        fun renderSelect(isSelect: Boolean) {
+            imgSelect.background = if (isSelect) itemView.context.getDrawable(R.drawable.bg_oval_green)
+            else itemView.context.getDrawable(R.drawable.bg_oval_gary)
         }
     }
 
-    class TaskDiffCallback : DiffUtil.ItemCallback<ItemType>() {
-        override fun areItemsTheSame(oldItem: ItemType, newItem: ItemType): Boolean {
-            return oldItem::class.simpleName == newItem::class.simpleName
+    class TaskDiffCallback : DiffUtil.ItemCallback<User>() {
+        override fun areItemsTheSame(oldItem: User, newItem: User): Boolean {
+            return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: ItemType, newItem: ItemType): Boolean {
-            return oldItem.user.id == newItem.user.id
+        override fun areContentsTheSame(oldItem: User, newItem: User): Boolean {
+            return oldItem == newItem
         }
     }
 }

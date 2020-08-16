@@ -39,7 +39,7 @@ class MainActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClick
     private val bottomSheet by lazy {
         BottomSheetBehavior.from(clBottomSheet)
     }
-    private val userAdapter = UserAdapter()
+    private val userAdapter by lazy { UserAdapter(rvUsers) }
     private var markers = mutableListOf<UserMarker>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -124,7 +124,7 @@ class MainActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClick
 
     private fun setCallbackListener() {
         userAdapter.setOnItemClickListener {clickedUser ->
-            userAdapter.updateSelectUser(clickedUser)
+            //userAdapter.updateSelectUser(clickedUser)
             markers.forEach {
                 if(it.user == clickedUser){
                     onMarkerClick(it.mark)
