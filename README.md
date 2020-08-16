@@ -1,5 +1,7 @@
 # location_assignment
 
+![demo1](https://github.com/ChengTaHuang/location_assignment/blob/master/demo/demo1.gif)
+![demo2](https://github.com/ChengTaHuang/location_assignment/blob/master/demo/demo2.gif)
 
 ## Tech Stacks
 * MVVM architecture - Architecture
