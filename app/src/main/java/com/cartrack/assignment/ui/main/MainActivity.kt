@@ -1,16 +1,26 @@
 package com.cartrack.assignment.ui.main
 
+import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
+import android.view.animation.AnticipateOvershootInterpolator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cartrack.assignment.R
 import com.cartrack.assignment.data.bean.User
 import com.cartrack.assignment.ui.base.BaseActivity
 import com.cartrack.assignment.ui.main.adapter.UserAdapter
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Observable
@@ -22,7 +32,7 @@ import kotlinx.android.synthetic.main.sub_bottom_sheet.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class MainActivity : BaseActivity(), OnMapReadyCallback {
+class MainActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private val viewModel: MainViewModel by viewModel()
     private lateinit var mMap: GoogleMap
     private var sbNetwork: Snackbar? = null
@@ -30,6 +40,7 @@ class MainActivity : BaseActivity(), OnMapReadyCallback {
         BottomSheetBehavior.from(clBottomSheet)
     }
     private val userAdapter = UserAdapter()
+    private var markers = mutableListOf<UserMarker>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +52,24 @@ class MainActivity : BaseActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        mMap.setOnMarkerClickListener(this)
+        googleMap.uiSettings.isMyLocationButtonEnabled = false
+    }
+
+    override fun onMarkerClick(mark: Marker): Boolean {
+        markers.forEach {
+            if (it.mark == mark) {
+                it.mark.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.select_user))
+                it.mark.showInfoWindow()
+                userAdapter.updateSelectUser(it.user)
+            }
+            else {
+                it.mark.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.unselect_user))
+                it.mark.hideInfoWindow()
+            }
+        }
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mark.position, 5F))
+        return true
     }
 
     override fun displayLoading(isLoading: Boolean) {
@@ -74,6 +103,10 @@ class MainActivity : BaseActivity(), OnMapReadyCallback {
             openBar.onTouchEvent(motionEvent)
             false
         }
+        viewExpand.setOnTouchListener { _, motionEvent ->
+            imgExpand.onTouchEvent(motionEvent)
+            false
+        }
     }
 
     private fun setClickListener() {
@@ -84,11 +117,19 @@ class MainActivity : BaseActivity(), OnMapReadyCallback {
                 bottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
             }
         }
+        viewExpand.setOnClickListener {
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(1f))
+        }
     }
 
     private fun setCallbackListener() {
-        userAdapter.setOnItemClickListener {
-            userAdapter.updateSelectUser(it)
+        userAdapter.setOnItemClickListener {clickedUser ->
+            userAdapter.updateSelectUser(clickedUser)
+            markers.forEach {
+                if(it.user == clickedUser){
+                    onMarkerClick(it.mark)
+                }
+            }
         }
     }
 
@@ -100,6 +141,37 @@ class MainActivity : BaseActivity(), OnMapReadyCallback {
                 viewModel.getUsers()
             }
         sbNetwork!!.show()
+    }
+
+    @SuppressLint("ObjectAnimatorBinding")
+    private fun showMarker(data: List<User>) {
+        data.map {
+            val laLng = LatLng(it.address.geo.lat.toDouble(), it.address.geo.lng.toDouble())
+            val markerOptions = MarkerOptions().position(laLng)
+            val marker = mMap.addMarker(markerOptions)
+            marker.title = it.userName
+            markers.add(UserMarker(it , marker))
+            addMarkerAnimation(marker)
+        }
+    }
+
+    private fun addMarkerAnimation(marker: Marker) {
+        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.unselect_user)
+        val animation = ValueAnimator.ofFloat(0.1F, 0.8F)
+        animation.duration = 500
+        animation.interpolator = AnticipateOvershootInterpolator()
+
+        animation.addUpdateListener { animationState ->
+            val scaleFactor = animationState.animatedValue as Float
+            val newBitMap = Bitmap.createScaledBitmap(
+                bitmap,
+                (bitmap.width * scaleFactor).toInt(),
+                (bitmap.height * scaleFactor).toInt(),
+                false
+            )
+            marker.setIcon(BitmapDescriptorFactory.fromBitmap(newBitMap))
+        }
+        animation.start()
     }
 
     private fun subscribeDataChange() {
@@ -124,6 +196,7 @@ class MainActivity : BaseActivity(), OnMapReadyCallback {
         state
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
+                showMarker(it)
                 userAdapter.update(it)
             }, {
                 showError(it)
@@ -158,3 +231,5 @@ class MainActivity : BaseActivity(), OnMapReadyCallback {
         }
     }
 }
+
+data class UserMarker(val user : User ,val mark: Marker)
