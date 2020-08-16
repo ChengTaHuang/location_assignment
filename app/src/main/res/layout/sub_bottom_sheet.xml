@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/clBottomSheet"
     android:layout_width="match_parent"
-    android:layout_height="300dp"
+    android:layout_height="400dp"
     android:background="@drawable/bg_bottom_sheet"
     android:clickable="true"
     android:focusable="true"
@@ -35,10 +35,11 @@
         android:id="@+id/rvUsers"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
+        android:paddingTop="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewCloseBar"
+        app:layout_constraintTop_toBottomOf="@+id/viewOpenBar"
         tools:listitem="@layout/item_country" />
 </androidx.constraintlayout.widget.ConstraintLayout>

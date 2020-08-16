@@ -2,11 +2,12 @@ package com.cartrack.assignment.ui.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.cartrack.assignment.R
 import com.cartrack.assignment.data.bean.User
 import com.cartrack.assignment.ui.base.BaseActivity
+import com.cartrack.assignment.ui.main.adapter.UserAdapter
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -28,6 +29,7 @@ class MainActivity : BaseActivity(), OnMapReadyCallback {
     private val bottomSheet by lazy {
         BottomSheetBehavior.from(clBottomSheet)
     }
+    private val userAdapter = UserAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,10 +49,18 @@ class MainActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     private fun initViews() {
-
         initMap()
+        initUserRecyclerView()
         setTouchEffect()
         setClickListener()
+        setCallbackListener()
+    }
+
+    private fun initUserRecyclerView() {
+        with(rvUsers) {
+            layoutManager = LinearLayoutManager(baseContext)
+            adapter = userAdapter
+        }
     }
 
     private fun initMap() {
@@ -73,6 +83,12 @@ class MainActivity : BaseActivity(), OnMapReadyCallback {
             } else if (bottomSheet.state == BottomSheetBehavior.STATE_COLLAPSED) {
                 bottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
             }
+        }
+    }
+
+    private fun setCallbackListener() {
+        userAdapter.setOnItemClickListener {
+            userAdapter.updateSelectUser(it)
         }
     }
 
@@ -108,7 +124,7 @@ class MainActivity : BaseActivity(), OnMapReadyCallback {
         state
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Log.i("check", "$it")
+                userAdapter.update(it)
             }, {
                 showError(it)
             })

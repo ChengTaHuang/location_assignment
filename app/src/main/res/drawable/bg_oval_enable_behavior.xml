@@ -2,8 +2,8 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:state_enabled="false"
-        android:drawable="@drawable/bg_oval_value_invalid" />
+        android:drawable="@drawable/bg_oval_gary" />
     <item
         android:state_enabled="true"
-        android:drawable="@drawable/bg_oval_value_valid" />
+        android:drawable="@drawable/bg_oval_green" />
 </selector>
