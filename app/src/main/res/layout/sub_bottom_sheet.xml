@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="300dp"
     android:background="@drawable/bg_bottom_sheet"
+    android:clickable="true"
     app:behavior_hideable="false"
     app:behavior_peekHeight="50dp"
     app:layout_behavior="@string/bottom_sheet_behavior">
@@ -22,7 +23,7 @@
         app:srcCompat="@drawable/ic_close_bar" />
 
     <com.cartrack.assignment.ui.custom.TouchView
-        android:id="@+id/viewCloseBar"
+        android:id="@+id/viewOpenBar"
         android:layout_width="0dp"
         android:layout_height="30dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,5 +39,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/viewCloseBar"
-        tools:listitem="@layout/item_country"/>
+        tools:listitem="@layout/item_country" />
 </androidx.constraintlayout.widget.ConstraintLayout>
