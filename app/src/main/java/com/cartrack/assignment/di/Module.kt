@@ -6,6 +6,9 @@ import com.cartrack.assignment.data.local.DatabaseCallback
 import com.cartrack.assignment.ui.login.LoginModel
 import com.cartrack.assignment.ui.login.LoginModelImpl
 import com.cartrack.assignment.ui.login.LoginViewModel
+import com.cartrack.assignment.ui.main.MainModel
+import com.cartrack.assignment.ui.main.MainModelImpl
+import com.cartrack.assignment.ui.main.MainViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -27,4 +30,8 @@ val appModule = module {
         LoginModelImpl(get())
     }
     viewModel { LoginViewModel(get()) }
+    factory<MainModel> {
+        MainModelImpl()
+    }
+    viewModel { MainViewModel(get()) }
 }

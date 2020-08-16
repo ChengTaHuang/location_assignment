@@ -4,21 +4,18 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.PasswordTransformationMethod
-import android.util.Log
 import android.view.View
 import com.cartrack.assignment.R
-import com.cartrack.assignment.data.local.AccountDao
 import com.cartrack.assignment.ui.base.BaseActivity
+import com.cartrack.assignment.ui.main.MainActivity
 import com.mukesh.countrypicker.Country
 import com.mukesh.countrypicker.CountryPicker
 import com.mukesh.countrypicker.CountryPicker.SORT_BY_NAME
 import com.mukesh.countrypicker.listeners.OnCountryPickerListener
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_login.*
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -165,8 +162,8 @@ class LoginActivity : BaseActivity(), OnCountryPickerListener {
         }
     }
 
-    private fun displayLoginInfoError(show : Boolean){
-        tvError.visibility = if(show) View.VISIBLE else View.INVISIBLE
+    private fun displayLoginInfoError(show: Boolean) {
+        tvError.visibility = if (show) View.VISIBLE else View.INVISIBLE
     }
 
     private fun subscribePasswordFormat(state: Observable<Format>) {
@@ -197,9 +194,9 @@ class LoginActivity : BaseActivity(), OnCountryPickerListener {
         state
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                if(it){
-
-                }else{
+                if (it) {
+                    MainActivity.startActivity(this)
+                } else {
                     displayLoginInfoError(true)
                 }
             }, {
